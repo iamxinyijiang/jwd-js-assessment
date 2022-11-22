@@ -24,6 +24,20 @@ window.addEventListener('DOMContentLoaded', () => {
   start.addEventListener('click', function (e) {
     document.querySelector('#quizBlock').style.display = 'block';
     start.style.display = 'none';
+  //add countdown timer
+  let timer = 59;
+  let interval = setInterval(function () {
+    document.getElementById('time').innerHTML = `${timer--} seconds.`;
+    if (timer === -1) {
+      //clearInterval(interval);
+      document.getElementById('time').innerHTML = '0 seconds.';
+      clearInterval(interval);
+      // when the time is up, end the quiz, display the score and highlight the correct answers
+      calculateScore();
+      //remove submit button when time's up
+      quizSubmit.remove();
+    }
+  }, 1000);
   });
   // quizArray QUESTIONS & ANSWERS
   // q = QUESTION, o = OPTIONS, a = CORRECT ANSWER
@@ -44,6 +58,17 @@ window.addEventListener('DOMContentLoaded', () => {
       o: ['Sydney', 'Canberra', 'Melbourne', 'Perth'],
       a: 1,
     },
+    //add two more questions
+    {
+      q: 'Jeff Bezos is the founder of which billion dollar company?',
+      o: ['Amazon', 'Tesla', 'Apple', 'Subway'],
+      a: 0, // array index 1 - so Amazon is the correct answer here
+    },
+    {
+      q: 'Who was the first ever Disney Princess?',
+      o: ['Sleeping Beauty', 'Belle', 'Snow White', 'Cinderella'],
+      a: 2, // array index 2- so Snow White is the correct answer here
+    },
   ];
 
   // function to Display the quiz questions and answers from the object
@@ -61,8 +86,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div>&nbsp;</div>`;
       quizWrap.innerHTML = quizDisplay;
     });
-  };
-
+  }
   // Calculate the score
   const calculateScore = () => {
     let score = 0;
@@ -76,15 +100,34 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (quizItem.a == i) {
           //change background color of li element here
+          liElement.style.backgroundColor = '#32CD32'//right answer
+        } else if(radioElement.checked){
+          liElement.style.backgroundColor = '#FF6347'//wrong answer
         }
-
-        if (radioElement.checked) {
+        //must meet two conditions to score
+        if (radioElement.checked && quizItem.a == i) {
           // code for task 1 goes here
+          score++;
         }
       }
+      //display score
+      document.getElementById("score").innerHTML = `Your score is ${score}/5.`
     });
   };
 
   // call the displayQuiz function
   displayQuiz();
+
+  // submit button
+  const quizSubmit = document.getElementById("btnSubmit");
+  quizSubmit.addEventListener('click', function (e) {
+      calculateScore(); //calling score function for results
+    })
 });
+
+  // reset button
+  let quizReset = document.getElementById('btnReset');
+  quizReset.addEventListener('click', function (e) {
+  //Window location.reload() method reloads the current document.
+    location.reload();
+  });
